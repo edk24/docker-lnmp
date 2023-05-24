@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  # web
+  nginx:
+    image: nginx:1.24-alpine
+    restart: always
+    volumes:
+      - ./config/vhost.conf:/etc/nginx/templates/default.conf.template
+      - ${APP_PATH}:/usr/share/nginx/html
+      - ./runtime/log/nginx/:/var/log/nginx/
+    ports:
+      - "3001:80"
+    networks:
+      - back
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+    links:
+      - php-fpm
+  
+  # php-fpm
+  php-fpm:
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: php:answersystem-fpm-alpine
+    restart: always
+    networks:
+      - back
+    environment:
+      - SET_CONTAINER_TIMEZONE=true
+      - CONTAINER_TIMEZONE=Asia/Shanghai
+    volumes:
+      - ${APP_PATH}:/usr/share/nginx/html
+      - ./config/php-fpm.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
+  
+  # redis
+  redis:
+    image: redis:alpine3.17
+    restart: always
+    # ports:
+    #   - "6376:6379"
+    networks:
+      - back
+
+networks:
+  back:
+    driver: bridge
