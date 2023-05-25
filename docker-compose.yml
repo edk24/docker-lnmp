@@ -1,24 +1,6 @@
 version: '3'
 
 services:
-  # web
-  nginx:
-    image: nginx:1.24-alpine
-    restart: always
-    volumes:
-      - ./config/vhost.conf:/etc/nginx/templates/default.conf.template
-      - ${APP_PATH}:/usr/share/nginx/html
-      - ./runtime/log/nginx/:/var/log/nginx/
-    ports:
-      - "3001:80"
-    networks:
-      - back
-    environment:
-      - NGINX_HOST=localhost
-      - NGINX_PORT=80
-    links:
-      - php-fpm
-  
   # php-fpm
   php-fpm:
     build:
@@ -32,15 +14,32 @@ services:
       - SET_CONTAINER_TIMEZONE=true
       - CONTAINER_TIMEZONE=Asia/Shanghai
     volumes:
-      - ${APP_PATH}:/usr/share/nginx/html
+      - ${APP_PATH}:/var/www/html
       - ./config/php-fpm.conf:/usr/local/etc/php-fpm.d/zz-docker.conf
-  
+    
+  # web
+  nginx:
+    image: nginx:1.24-alpine
+    restart: always
+    volumes:
+      - ./config/vhost.conf:/etc/nginx/templates/default.conf.template
+      - ./runtime/log/nginx/:/var/log/nginx/
+    volumes_from:
+      - php-fpm
+    ports:
+      - "3001:80"
+    networks:
+      - back
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+    links:
+      - php-fpm
+
   # redis
   redis:
     image: redis:alpine3.17
     restart: always
-    # ports:
-    #   - "6376:6379"
     networks:
       - back
 

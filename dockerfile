@@ -36,10 +36,10 @@ RUN curl -o /usr/local/bin/composer https://mirrors.cloud.tencent.com/composer/c
     && mkdir -p /var/www/html && mkdir -p /.composer
 
 # Create website directory
-RUN mkdir -p /usr/share/nginx/html
+# RUN mkdir -p /usr/share/nginx/html
 
 
-WORKDIR /usr/share/nginx/html
+# WORKDIR /usr/share/nginx/html
 
 # Crontab
 # RUN echo "* * * * * cd /var/www/html && php think Check > /dev/null 2>&1 &" >> /var/spool/cron/crontabs/root
