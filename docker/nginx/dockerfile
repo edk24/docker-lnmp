@@ -1,0 +1,13 @@
+FROM nginx:1.24-alpine
+
+# Tencent mirrors
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.cloud.tencent.com/g' /etc/apk/repositories
+
+# Install certbot
+RUN apk update && \
+    apk add certbot certbot-nginx && \
+    rm -rf /var/cache/apk/*
+
+WORKDIR /var/www/html
+
+CMD ["nginx", "-g", "daemon off;"]

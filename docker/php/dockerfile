@@ -22,7 +22,8 @@ RUN apk --no-cache add libpng autoconf g++ libxml2-dev make git libpng-dev libjp
     fileinfo \
     simplexml \
     xml \
-    opcache
+    opcache \
+    && rm -rf /var/cache/apk/*
 
 # Install redis for php
 RUN pecl channel-update pecl.php.net \
@@ -35,14 +36,8 @@ RUN curl -o /usr/local/bin/composer https://mirrors.cloud.tencent.com/composer/c
     && /usr/local/bin/composer config -g repo.packagist composer https://mirrors.cloud.tencent.com/composer/ \
     && mkdir -p /var/www/html && mkdir -p /.composer
 
-# Create website directory
-# RUN mkdir -p /usr/share/nginx/html
 
 
-# WORKDIR /usr/share/nginx/html
-
-# Crontab
-# RUN echo "* * * * * cd /var/www/html && php think Check > /dev/null 2>&1 &" >> /var/spool/cron/crontabs/root
 
 # reference
 # - gd配置freetype报错: https://github.com/docker-library/php/issues/931
